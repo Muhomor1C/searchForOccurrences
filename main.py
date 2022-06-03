@@ -2,10 +2,15 @@ import os
 import re
 
 
-def read_file(filename):
-    with open(filename, 'r', encoding="utf-8") as file:
-        words = file.read()
-    return re.split(';|,| |:|. |\\(|\\)|\\t|\\n|\\r', words)
+def read_file(file, main_file):
+    pattern = re.compile(';|,| |:|. |\\(|\\)|\\t|\\n|\\r')
+    with open(file, 'r', encoding="utf-8") as file:
+        file = file.read()
+        if main_file:
+            return pattern.split(file)
+        else:
+            for word in search_words:
+                search_words[word] += pattern.split(file).count(word)
 
 
 def search_files(directory):
@@ -16,17 +21,15 @@ def search_files(directory):
 
 
 def search():
-    search_words = dict.fromkeys(set(read_file(filename)), 0)
     for file in list_of_files:
-        words_in_file = read_file(file)
-        for word in search_words:
-            search_words[word] = search_words[word] + words_in_file.count(word)
+        read_file(file, False)
     return search_words
 
 
 if __name__ == '__main__':
-    filename = './words.txt'
+    sample = './words.txt'
     directoryes = ('./files', './files1', './files2')
+    search_words = dict.fromkeys(set(read_file(sample, True)), 0)
     list_of_files = []
     for directory in directoryes:
         list_of_files = search_files(directory)
