@@ -2,7 +2,7 @@ import os
 import re
 
 
-def read_file(file, main_file):
+def read_file(file: str, main_file: bool):
     pattern = re.compile(';|,| |:|. |\\(|\\)|\\t|\\n|\\r')
     with open(file, 'r', encoding="utf-8") as file:
         file = file.read()
@@ -22,14 +22,14 @@ def search_files(directory):
 
 def search():
     for file in list_of_files:
-        read_file(file, False)
+        read_file(file=file, main_file=False)
     return search_words
 
 
 if __name__ == '__main__':
     sample = './words.txt'
     directoryes = ('./files', './files1', './files2')
-    search_words = dict.fromkeys(set(read_file(sample, True)), 0)
+    search_words = dict.fromkeys(set(read_file(file=sample, main_file=True)), 0)
     list_of_files = []
     for directory in directoryes:
         list_of_files = search_files(directory)
