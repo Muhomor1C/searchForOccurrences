@@ -1,9 +1,28 @@
 import os
 import re
 
+sample = './words.txt'  # Слова, которые надо найти находятся в файле образце
+directoryes = ['./files', './files1', './files2']  # Где ищем файлы
+list_of_files = []  # Список с файлами. Заполняется автоматически
+pattern = re.compile(';|,| |:|. |\\(|\\)|\\t|\\n|\\r')  # Шаблон с разделителями
+
 
 def read_file(file: str, main_file: bool):
-    pattern = re.compile(';|,| |:|. |\\(|\\)|\\t|\\n|\\r')
+    """
+        Получает имя файла и признак "файла образца для поиска".
+    Если это файл образец, то читает его содержимое и возвращает список слов для
+    поиска. Иначе добавляет в словарь search_words количество найденных слов.
+        Да, здесь нарушен принцип единственной ответственности, но если делать по
+    другому, то придется либо передавать открытый файл или, того хуже, список,
+    из функции в функцию, что скажется на производительности, либо делать две функции,
+    которые будут открывать файл, что, в свою очередь, нарушает принцип
+    "Не повторяй себя". Увы, лучше не придумал. Все ради производительности.
+
+    :param file: str - имя и путь к файлу
+    :param main_file: bool - признак файла образца
+    :return: list - search_words - если main_file == True - список слов для поиска
+    """
+
     with open(file, 'r', encoding="utf-8") as file:
         file = file.read()
         if main_file:
@@ -13,11 +32,11 @@ def read_file(file: str, main_file: bool):
                 search_words[word] += pattern.split(file).count(word)
 
 
-def search_files(directory):
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            list_of_files.append(os.path.join(root, file))
-    return list_of_files
+def search_files():
+    for directory in directoryes:
+        for root, dirs, files in os.walk(directory):
+            for file in files:
+                list_of_files.append(os.path.join(root, file))
 
 
 def search():
@@ -27,10 +46,6 @@ def search():
 
 
 if __name__ == '__main__':
-    sample = './words.txt'
-    directoryes = ('./files', './files1', './files2')
     search_words = dict.fromkeys(set(read_file(file=sample, main_file=True)), 0)
-    list_of_files = []
-    for directory in directoryes:
-        list_of_files = search_files(directory)
+    search_files()
     print(search())
